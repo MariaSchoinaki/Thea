@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/start_page.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const TheaApp());
@@ -10,9 +11,10 @@ class TheaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: StartScreen(),
+      theme: AppTheme.lightTheme,
+      home: const StartScreen(),
     );
   }
 }

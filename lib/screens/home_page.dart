@@ -1,9 +1,8 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import '../models/play.dart';
 import '../data/plays.dart' as plays_db;
 import '../util/parser.dart';
+import '../theme/app_theme.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -29,12 +28,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Color(0xFFFFFAF6),
       appBar: AppBar(
-        title: Text("Thea", style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        title: Text("Thea", style: theme.appBarTheme.titleTextStyle),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: _plays.isEmpty
           ? Center(child: CircularProgressIndicator())
@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
             margin: EdgeInsets.only(bottom: 20),
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Color(0xFF9DBBD8),
+              color: AppColors.container,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -58,30 +58,39 @@ class _HomePageState extends State<HomePage> {
                   child: Image.asset(play.imageUrl),
                 ),
                 SizedBox(height: 12),
-                Text(play.playwriter, style: TextStyle(fontSize: 16)),
+                Text(
+                  play.playwriter,
+                  style: TextStyle(fontSize: 16),
+                ),
                 SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black87,
+                        backgroundColor: AppColors.grey,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () {},
-                      child: Text("More Info"),
+                      onPressed: () {
+                        //TODO: Implement more info screen
+                      },
+                      child: Text("More Info",
+                          style: TextStyle(color: AppColors.lightText)),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrangeAccent,
+                        backgroundColor: AppColors.orange,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () {},
-                      child: Text("Book"),
+                      onPressed: () {
+                        //TODO: Implement booking screen
+                      },
+                      child: Text("Book",
+                          style: TextStyle(color: AppColors.lightText)),
                     ),
                   ],
                 ),
@@ -93,9 +102,11 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         onTap: (index) {
-          // Εδώ μπορείς να κάνεις πλοήγηση ή να εμφανίσεις message
-          // π.χ. Navigator.push() αν έχεις άλλες σελίδες
+          // Navigation logic here
         },
+        selectedItemColor: AppColors.orange,
+        unselectedItemColor: Colors.grey,
+        backgroundColor: AppColors.background,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -106,8 +117,8 @@ class _HomePageState extends State<HomePage> {
             label: 'My tickets',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'My account',
+            icon: Icon(Icons.settings_accessibility),
+            label: 'Settings',
           ),
         ],
       ),
