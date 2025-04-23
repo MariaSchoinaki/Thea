@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:thea/screens/home_page.dart';
+import 'package:thea/screens/info_play_page.dart';
 import 'screens/start_page.dart';
 import 'theme/app_theme.dart';
 
@@ -15,6 +17,10 @@ class TheaApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       home: const StartScreen(),
+      routes: {
+        '/info_play_page': (context) => InfoPlayPage(),
+        '/home_page': (context) => HomePage(),
+      },
     );
   }
 }

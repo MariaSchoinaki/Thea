@@ -55,12 +55,11 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF6F2),
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: Image.asset(
-            'assets/images/logo.png',
+            'assets/images/logo_transparent.png',
             width: 250,
             fit: BoxFit.contain,
           ),
