@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import 'my_tickets_screen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -36,7 +37,12 @@ class HomePage extends StatelessWidget {
                   _buildMenuButton(Image.asset('assets/icons/tickets.png',width: 50,height: 50,),
                                     'See your tickets',
                                     onTap: () {
-                                      //TODO: Implement booking screen
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => MyTicketsScreen(),
+                                        ),
+                                      );
                                     },),
                   _buildMenuButton(Image.asset('assets/icons/complaints.png',width: 50,height: 50,),
                                     'Make a complaint',
@@ -118,7 +124,12 @@ class HomePage extends StatelessWidget {
               //Navigator.pushNamed(context, '/home');
               break;
             case 1:
-              //Navigator.pushNamed(context, '/my_tickets');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyTicketsScreen(),
+                ),
+              );
               break;
             case 2:
               //Navigator.pushNamed(context, '/settings');

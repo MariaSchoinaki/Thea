@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:thea/screens/play_details_screen.dart';
 import '../models/play.dart';
 import '../data/plays.dart' as plays_db;
 import '../util/parser.dart';
 import '../theme/app_theme.dart';
+import 'booking_screen.dart';
+import 'my_tickets_screen.dart';
 
 class InfoPlayPage extends StatefulWidget {
   @override
@@ -74,7 +77,12 @@ class _InfoPlayPageState extends State<InfoPlayPage> {
                         ),
                       ),
                       onPressed: () {
-                        //TODO: Implement more info screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PlayDetailsScreen(playData: _plays[index]),
+                          ),
+                        );
                       },
                       child: Text("More Info",
                           style: TextStyle(color: AppColors.lightText)),
@@ -87,7 +95,12 @@ class _InfoPlayPageState extends State<InfoPlayPage> {
                         ),
                       ),
                       onPressed: () {
-                        //TODO: Implement booking screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BookingScreen(play: _plays[index]),
+                          ),
+                        );
                       },
                       child: Text("Book",
                           style: TextStyle(color: AppColors.lightText)),
@@ -110,7 +123,12 @@ class _InfoPlayPageState extends State<InfoPlayPage> {
               Navigator.pushNamed(context, '/home_page');
               break;
             case 1:
-              //Navigator.pushNamed(context, '/my_tickets');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyTicketsScreen(),
+                ),
+              );
               break;
             case 2:
               //Navigator.pushNamed(context, '/settings');
