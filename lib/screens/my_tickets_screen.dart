@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thea/models/booking_stage.dart';
 import 'package:thea/models/play.dart';
 import 'package:thea/models/ticket.dart';
 import 'package:thea/theme/app_theme.dart';
@@ -136,8 +137,7 @@ class MyTicketsScreen extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: GestureDetector(
                 onTap: () {
-                  // TODO: Implement chatbot screen navigation
-                  print('Chatbot avatar tapped');
+                  navigate(context, BookingStage.initial);
                 },
                 child: const CircleAvatar(
                   radius: 24,

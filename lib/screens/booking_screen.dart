@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:thea/models/play.dart';
 import 'package:thea/theme/app_theme.dart';
 
+import '../models/booking_stage.dart';
 import 'checkout_screen.dart';
 import 'my_tickets_screen.dart';
 
@@ -18,6 +19,7 @@ class _BookingScreenState extends State<BookingScreen> {
   DateTime? _selectedDate;
   String? _selectedTime;
   List<String> _selectedSeats = [];
+  BookingStage stage = BookingStage.dateTimeSelection;
   // Example seat layout data (replace with your actual data)
   List<List<String?>> _seatLayout = [
     ['A1', 'A2', 'A3', 'A4', null, 'A5', 'A6', 'A7'],
@@ -157,6 +159,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         _selectedDate = newDate;
                         _selectedTime = null;
                         _selectedSeats.clear();
+                        stage = BookingStage.dateTimeSelection;
                       });
                     },
                   ),
@@ -177,6 +180,7 @@ class _BookingScreenState extends State<BookingScreen> {
                               setState(() {
                                 _selectedTime = selected ? widget.play.afternoon : null;
                                 _selectedSeats.clear(); // Clear selected seats on time change
+                                stage = BookingStage.seatSelection;
                               });
                             },
                             selectedColor: AppColors.green,
@@ -190,6 +194,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             setState(() {
                               _selectedTime = selected ? widget.play.night : null;
                               _selectedSeats.clear(); // Clear selected seats on time change
+                              stage = BookingStage.seatSelection;
                             });
                           },
                           selectedColor: AppColors.green,
@@ -244,8 +249,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   const SizedBox(width: 8),
                   GestureDetector(
                     onTap: () {
-                      //TODO: implement chatbot screen
-                      print('Chatbot avatar tapped');
+                      navigate(context, stage);
                     },
                     child: const CircleAvatar(
                       radius: 24,

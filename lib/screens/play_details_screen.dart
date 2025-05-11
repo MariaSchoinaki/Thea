@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thea/models/booking_stage.dart';
 import 'package:thea/models/play.dart';
 
 import '../theme/app_theme.dart';
@@ -116,8 +117,7 @@ class PlayDetailsScreen extends StatelessWidget {
                   const SizedBox(width: 8),
                   GestureDetector(
                     onTap: () {
-                      //TODO: implement chatbot screen
-                      print('Chatbot avatar tapped');
+                      navigate(context, BookingStage.playDetails);
                     },
                     child: const CircleAvatar(
                       radius: 24,

@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:thea/screens/complaint_screen.dart';
+import 'package:thea/screens/faq_screen.dart';
 
+import '../models/booking_stage.dart';
 import '../theme/app_theme.dart';
+import 'chat_screen.dart';
+import 'contact_screen.dart';
 import 'my_tickets_screen.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
@@ -47,19 +58,34 @@ class HomePage extends StatelessWidget {
                   _buildMenuButton(Image.asset('assets/icons/complaints.png',width: 50,height: 50,),
                                     'Make a complaint',
                                     onTap: () {
-                                      //TODO: Implement complaint screen
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ComplaintScreen(),
+                                        ),
+                                      );
                                     },),
                   _buildMenuButton(Image.asset('assets/icons/faq.png', width: 50, height: 50,),
                                     'Frequently asked questions',
                                     onTap: () {
-                                      //TODO: Implement FAQ screen
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => FAQScreen(),
+                                        ),
+                                      );
                                     },),
                 ],
               ),
               const SizedBox(height: 30),
               ElevatedButton.icon(
                 onPressed: () {
-                  //TODO: Implement call to representative
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ContactUsScreen(),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.brownLight,
@@ -98,7 +124,7 @@ class HomePage extends StatelessWidget {
                     const SizedBox(width: 8),
                     GestureDetector(
                       onTap: () {
-                        //TODO: implement chatbot screen
+                        navigate(context, BookingStage.initial);
                       },
                       child: CircleAvatar(
                         radius: 24,

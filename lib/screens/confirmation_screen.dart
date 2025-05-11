@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:thea/models/play.dart';
 import 'package:thea/theme/app_theme.dart';
 
+import '../models/booking_stage.dart';
 import '../widgets/pdf_file_generator.dart';
+import 'chat_screen.dart';
 import 'my_tickets_screen.dart';
 
 
@@ -183,7 +185,9 @@ class ConfirmationScreen extends StatelessWidget {
                 children: [
                   const SizedBox(width: 8),
                   GestureDetector(
-                    onTap: null, // TODO: implement chatbot screen
+                    onTap: (){
+                      navigate(context, BookingStage.confirmation);
+                      },
                     child: CircleAvatar(
                       radius: 24,
                       backgroundImage: AssetImage('assets/images/bot_avatar.png'),

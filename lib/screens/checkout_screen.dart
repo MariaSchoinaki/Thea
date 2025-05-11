@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thea/models/booking_stage.dart';
 import 'package:thea/models/play.dart';
 import 'package:thea/theme/app_theme.dart';
 
@@ -269,8 +270,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   const SizedBox(width: 8),
                   GestureDetector(
                     onTap: () {
-                      //TODO: implement chatbot screen
-                      print('Chatbot avatar tapped');
+                      navigate(context, BookingStage.checkout);
                     },
                     child: const CircleAvatar(
                       radius: 24,
