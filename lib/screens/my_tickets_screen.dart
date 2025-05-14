@@ -18,17 +18,118 @@ class MyTicketsScreen extends StatefulWidget {
 
 class _MyTicketsScreenState extends State<MyTicketsScreen> {
   List<BoughtTicket> purchasedTickets = [];
+  Set<String> visibleTicketIds = {}; // π.χ. based on ticket.id (create one if needed)
 
   @override
   void initState() {
     super.initState();
-    loadBoughtTickets().then((tickets) {
-      setState(() {
-        purchasedTickets = tickets;
-      });
+    _loadTickets();
+  }
+
+  Future<void> _loadTickets() async {
+    List<BoughtTicket> tickets = await loadBoughtTickets();
+    setState(() {
+      purchasedTickets = tickets;
+      visibleTicketIds = purchasedTickets.map((t) => t.id).toSet();
     });
   }
 
+  Widget buildTicketCard(BoughtTicket ticket, int index, BuildContext context) {
+    final theme = Theme.of(context);
+    final showDate = ticket.date;
+    final showTime = ticket.time;
+    final seats = ticket.seats;
+    final formattedDate = showDate;
+    final ticketId = ticket.id;
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16.0),
+      color: AppColors.container,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: SizedBox(
+                    height: 150.0,
+                    child: Image.asset(
+                      ticket.play.imageUrl,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        ticket.play.title,
+                        style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8.0),
+                      Text('Location: ${ticket.play.hall}', style: theme.textTheme.titleMedium),
+                      Text('Seats: ${seats.join(', ')}', style: theme.textTheme.titleMedium),
+                      Text('Date: $formattedDate', style: theme.textTheme.titleMedium),
+                      Text('Time: $showTime', style: theme.textTheme.titleMedium),
+                      Text(ticket.isPaid ? 'Already Paid' : 'Payment up front', style: theme.textTheme.titleMedium),
+                      const SizedBox(height: 16.0),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    await generateTicketPdf(
+                      title: ticket.play.title ?? '',
+                      imageUrl: ticket.play.imageUrl ?? 'assets/images/logo.png',
+                      selectedDate: showDate,
+                      selectedTime: showTime,
+                      selectedSeats: seats,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.green,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                  ),
+                  child: const Text('Download Ticket'),
+                ),
+                const SizedBox(width: 8.0),
+                ElevatedButton(
+                  onPressed: () {
+                    // Custom fade+remove
+                    setState(() {
+                      visibleTicketIds.remove(ticketId);
+                    });
+
+                    Future.delayed(const Duration(milliseconds: 300), () {
+                      setState(() {
+                        purchasedTickets.removeAt(index);
+                        saveBoughtTickets(purchasedTickets); // αν το κάνεις
+                      });
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.red,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                  ),
+                  child: const Text('Cancel Ticket'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
 
   @override
@@ -48,90 +149,21 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
             itemCount: purchasedTickets.length,
             itemBuilder: (context, index) {
               final ticket = purchasedTickets[index];
+              final ticketId = ticket.id;
               final showDate = ticket.date;
               final showTime = ticket.time;
               final seats = ticket.seats;
               final formattedDate = '${showDate.day}/${showDate.month}/${showDate.year}';
 
-              return Card(
-                margin: const EdgeInsets.only(bottom: 16.0),
-                color: AppColors.container,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child:
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: SizedBox(
-                                height: 150.0,
-                                child: Image.asset(
-                                  ticket.play.imageUrl,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    ticket.play.title,
-                                    style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  Text('Location: ${ticket.play.hall}', style: theme.textTheme.titleMedium),
-                                  Text('Seats: ${seats.join(', ')}', style: theme.textTheme.titleMedium),
-                                  Text('Date: $formattedDate', style: theme.textTheme.titleMedium),
-                                  Text('Time: $showTime', style: theme.textTheme.titleMedium),
-                                  Text(ticket.isPaid ? 'Already Paid' : 'Payment up front', style: theme.textTheme.titleMedium),
-                                  const SizedBox(height: 16.0),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () async {
-                                await generateTicketPdf(
-                                title: ticket.play.title ?? '',
-                                imageUrl: ticket.play.imageUrl ?? 'assets/images/logo.png',
-                                selectedDate: showDate,
-                                selectedTime: showTime,
-                                selectedSeats: seats,
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.green,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0)),
-                              ),
-                              child: const Text('Download Ticket'),
-                              ),
-                            const SizedBox(width: 8.0),
-                            ElevatedButton(
-                              onPressed: () {
-                                // TODO: Implement cancel ticket functionality for this ticket
-                                print('Cancel Ticket for ${ticket.play.title}');
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.red,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0)),
-                              ),
-                              child: const Text('Cancel Ticket'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+              return AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: visibleTicketIds.contains(ticketId) ? 1.0 : 0.0,
+                  child: visibleTicketIds.contains(ticketId)
+                      ? buildTicketCard(ticket, index, context)
+                      : const SizedBox.shrink(),
                 ),
               );
             },
@@ -193,5 +225,12 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
         ],
       ),
     );
+  }
+
+  void _cancelTicket(BoughtTicket ticket) {
+    setState(() {
+      purchasedTickets.remove(ticket);// Update UI after cancellation
+      cancelTicket(ticket.id);
+    });
   }
 }

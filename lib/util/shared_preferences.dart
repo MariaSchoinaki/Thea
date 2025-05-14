@@ -24,3 +24,14 @@ Future<void> addBoughtTicket(BoughtTicket newTicket) async {
   current.add(newTicket);
   await saveBoughtTickets(current);
 }
+
+Future<void> cancelTicket(String ticketId) async {
+  // Load the current list of bought tickets
+  List<BoughtTicket> currentTickets = await loadBoughtTickets();
+
+  // Remove the ticket with the provided ticketId
+  currentTickets.removeWhere((ticket) => ticket.id == ticketId);
+
+  // Save the updated list back to SharedPreferences
+  await saveBoughtTickets(currentTickets);
+}

@@ -5,18 +5,27 @@ import 'package:thea/models/play.dart';
 import 'package:thea/theme/app_theme.dart';
 
 import '../models/booking_stage.dart';
+import '../util/shared_preferences.dart';
 import '../widgets/pdf_file_generator.dart';
 import 'chat_screen.dart';
 import 'my_tickets_screen.dart';
 
 
-class ConfirmationScreen extends StatelessWidget {
+class ConfirmationScreen extends StatefulWidget {
   final BoughtTicket ticket;
 
   const ConfirmationScreen({
     Key? key,
     required this.ticket,
   }) : super(key: key);
+
+  @override
+  State<ConfirmationScreen> createState() => _ConfirmationScreenState();
+
+}
+
+class _ConfirmationScreenState extends State<ConfirmationScreen> {
+
 
   Widget _buildAppBarProgress() {
     return Row(
@@ -38,6 +47,7 @@ class ConfirmationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    var ticket = widget.ticket;
     final formattedDate = "${ticket.date.day}/${ticket.date.month}/${ticket.date.year}";
 
     return Scaffold(
@@ -151,9 +161,7 @@ class ConfirmationScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO: Implement cancel ticket functionality
-                      print('Cancel your ticket pressed');
-                      // You might want to show a confirmation dialog before canceling
+                      showCancelDialog(ticket.id);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.red,
@@ -228,6 +236,31 @@ class ConfirmationScreen extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_accessibility),
             label: 'Settings',
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showCancelDialog(String ticketId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Cancel Ticket"),
+        content: widget.ticket.isPaid ? Text("Are you sure you want to cancel this ticket and get a refund?") :
+                                        Text("Are you sure you want to cancel this ticket?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("No"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await cancelTicket(ticketId);
+              Navigator.pop(context);
+              setState(() {}); // Refresh ticket list
+            },
+            child: Text("Yes, Cancel"),
           ),
         ],
       ),
