@@ -3,6 +3,8 @@ import 'package:thea/models/booking_stage.dart';
 import 'package:thea/models/play.dart';
 import 'package:thea/theme/app_theme.dart';
 
+import '../models/bought_ticket.dart';
+import '../util/shared_preferences.dart';
 import 'confirmation_screen.dart';
 import 'my_tickets_screen.dart';
 
@@ -228,23 +230,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        print('Processing payment...');
-                        print('Play: ${widget.play.title}');
-                        print('Date: ${widget.selectedDate}');
-                        print('Time: ${widget.selectedTime}');
-                        print('Seats: ${widget.selectedSeats}');
-                        print('Card Number: ${_cardNumberController.text}');
-                        print('Cardholder Name: ${_cardholderNameController.text}');
-                        print('Month: ${_monthController.text}');
-                        print('Year: ${_yearController.text}');
-                        print('CCV: ${_ccvController.text}');
-                        // Navigate to a confirmation screen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ConfirmationScreen(play: widget.play, selectedDate: widget.selectedDate, selectedTime: widget.selectedTime, selectedSeats: widget.selectedSeats),
-                          ),
-                        );
+                        handleCheckout(isPayingNow: true);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -252,7 +238,43 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       textStyle: const TextStyle(fontSize: 18.0),
                     ),
-                    child: const Text('Pay', style: TextStyle(color: Colors.white)),
+                    child: const Text('Pay Now', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Divider(
+                        thickness: 1,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text("or"),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: 1,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      handleCheckout(isPayingNow: false);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black12,
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      textStyle: const TextStyle(fontSize: 18.0),
+                    ),
+                    child: const Text('Pay Later', style: TextStyle(color: Colors.white)),
                   ),
                 ),
                 const SizedBox(height: 80.0), // To avoid overlap with the fixed widget
@@ -376,4 +398,77 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       validator: validator,
     );
   }
+
+  void handleCheckout({required bool isPayingNow}) {
+    showPaymentConfirmationDialog(
+      context: context,
+      title: isPayingNow ? 'Confirm Payment' : 'Confirm Reservation',
+      message: isPayingNow
+          ? 'Are you sure you want to pay now and book your tickets?'
+          : 'Are you sure you want to reserve your tickets and pay later?',
+      onConfirmed: () async {
+        var ticket = BoughtTicket(
+          play: widget.play,
+          date: widget.selectedDate,
+          time: widget.selectedTime,
+          seats: widget.selectedSeats,
+          totalPrice: widget.selectedSeats.length * (widget.play.regularTickets.price).toDouble(),
+          isPaid: isPayingNow,
+        );
+        addBoughtTicket(ticket);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConfirmationScreen(ticket: ticket,),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> showPaymentConfirmationDialog({
+    required BuildContext context,
+    required String title,
+    required String message,
+    required VoidCallback onConfirmed,
+  }) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(title),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(message),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(); // Close dialog
+                    },
+                    child: const Text('Cancel'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.black, // Set the text color to black
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(); // Close dialog
+                      onConfirmed(); // Proceed
+                    },
+                    child: const Text('Confirm'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 }

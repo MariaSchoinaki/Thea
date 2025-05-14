@@ -4,23 +4,32 @@ import 'package:thea/models/play.dart';
 import 'package:thea/models/ticket.dart';
 import 'package:thea/theme/app_theme.dart';
 
+import '../models/bought_ticket.dart';
+import '../util/shared_preferences.dart';
 import '../widgets/pdf_file_generator.dart';
 
-class MyTicketsScreen extends StatelessWidget {
-  // Placeholder for the user's purchased tickets
-  static List<Play> purchasedTickets = [
-    Play(
-      title: 'Be More Chill',
-      imageUrl: 'assets/images/be_more_chill.jpg',
-      hall: 'Stage 1',
-      availableDates: {
-        '2025-04-26': {'18:00': ['A32', 'A33']}
-      },
-      headline: '', description: '', playwriter: '', cast: [], genre: '', runtime: '', afternoon: '', night: '', regularTickets: Ticket(name: '', price: 2, availableTickets: 5, soldTickets: 2), specialNeedsTickets: Ticket(name: '', price: 4, availableTickets: 3, soldTickets: 2),  ageLimit: '23', additionalInfo: '', hearingImpaired: false,)
-    // Add more purchased tickets here
-  ];
+class MyTicketsScreen extends StatefulWidget {
 
   const MyTicketsScreen({Key? key}) : super(key: key);
+  @override
+  State<MyTicketsScreen> createState() => _MyTicketsScreenState();
+
+}
+
+class _MyTicketsScreenState extends State<MyTicketsScreen> {
+  List<BoughtTicket> purchasedTickets = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadBoughtTickets().then((tickets) {
+      setState(() {
+        purchasedTickets = tickets;
+      });
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +48,10 @@ class MyTicketsScreen extends StatelessWidget {
             itemCount: purchasedTickets.length,
             itemBuilder: (context, index) {
               final ticket = purchasedTickets[index];
-              final showDate = ticket.availableDates?.keys.first ?? '';
-              final showTime = ticket.availableDates?[showDate]?.keys.first ?? '';
-              final seats = ticket.availableDates?[showDate]?[showTime] ?? [];
-              final formattedDate = showDate.isNotEmpty ? '${DateTime.parse(showDate).day}/${DateTime.parse(showDate).month}/${DateTime.parse(showDate).year}' : '';
+              final showDate = ticket.date;
+              final showTime = ticket.time;
+              final seats = ticket.seats;
+              final formattedDate = '${showDate.day}/${showDate.month}/${showDate.year}';
 
               return Card(
                 margin: const EdgeInsets.only(bottom: 16.0),
@@ -54,31 +63,30 @@ class MyTicketsScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            if (ticket.imageUrl != null)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 16.0),
-                                child: SizedBox(
-                                  height: 150.0,
-                                  child: Image.asset(
-                                    ticket.imageUrl!,
-                                    fit: BoxFit.cover,
-                                  ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 16.0),
+                              child: SizedBox(
+                                height: 150.0,
+                                child: Image.asset(
+                                  ticket.play.imageUrl,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
+                            ),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    ticket.title ?? '',
+                                    ticket.play.title,
                                     style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 8.0),
-                                  Text('Location: ${ticket.hall ?? ''}', style: theme.textTheme.titleMedium),
+                                  Text('Location: ${ticket.play.hall}', style: theme.textTheme.titleMedium),
                                   Text('Seats: ${seats.join(', ')}', style: theme.textTheme.titleMedium),
                                   Text('Date: $formattedDate', style: theme.textTheme.titleMedium),
                                   Text('Time: $showTime', style: theme.textTheme.titleMedium),
-                                  Text('Payment up front', style: theme.textTheme.titleMedium),
+                                  Text(ticket.isPaid ? 'Already Paid' : 'Payment up front', style: theme.textTheme.titleMedium),
                                   const SizedBox(height: 16.0),
                                 ],
                               ),
@@ -90,15 +98,13 @@ class MyTicketsScreen extends StatelessWidget {
                           children: [
                             ElevatedButton(
                               onPressed: () async {
-                                //TODO: add more info to the ticket model
-                                /**
                                 await generateTicketPdf(
-                                title: ticket.title ?? '',
-                                imageUrl: ticket.imageUrl ?? 'assets/images/logo.png',
-                                selectedDate: ,
-                                selectedTime: selectedTime,
-                                selectedSeats: selectedSeats,
-                                );*/
+                                title: ticket.play.title ?? '',
+                                imageUrl: ticket.play.imageUrl ?? 'assets/images/logo.png',
+                                selectedDate: showDate,
+                                selectedTime: showTime,
+                                selectedSeats: seats,
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.green,
@@ -112,7 +118,7 @@ class MyTicketsScreen extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () {
                                 // TODO: Implement cancel ticket functionality for this ticket
-                                print('Cancel Ticket for ${ticket.title}');
+                                print('Cancel Ticket for ${ticket.play.title}');
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.red,

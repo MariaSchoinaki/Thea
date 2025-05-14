@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:thea/models/bought_ticket.dart';
 import 'package:thea/models/play.dart';
 import 'package:thea/theme/app_theme.dart';
 
@@ -10,17 +11,11 @@ import 'my_tickets_screen.dart';
 
 
 class ConfirmationScreen extends StatelessWidget {
-  final Play play;
-  final DateTime selectedDate;
-  final String selectedTime;
-  final List<String> selectedSeats;
+  final BoughtTicket ticket;
 
   const ConfirmationScreen({
     Key? key,
-    required this.play,
-    required this.selectedDate,
-    required this.selectedTime,
-    required this.selectedSeats,
+    required this.ticket,
   }) : super(key: key);
 
   Widget _buildAppBarProgress() {
@@ -43,7 +38,7 @@ class ConfirmationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final formattedDate = "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+    final formattedDate = "${ticket.date.day}/${ticket.date.month}/${ticket.date.year}";
 
     return Scaffold(
       appBar: AppBar(
@@ -83,28 +78,27 @@ class ConfirmationScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
-                        if (play.imageUrl != null)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 16.0),
-                            child: SizedBox(
-                              height: 150.0,
-                              child: Image.asset(
-                                play.imageUrl,
-                                fit: BoxFit.cover,
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16.0),
+                          child: SizedBox(
+                            height: 150.0,
+                            child: Image.asset(
+                              ticket.play.imageUrl,
+                              fit: BoxFit.cover,
                             ),
                           ),
+                        ),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                play.title ?? '',
+                                ticket.play.title ,
                                 style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 8.0),
                               Text(
-                                '${play.hall} - ${selectedSeats.join(', ')}',
+                                '${ticket.play.hall} - ${ticket.seats.join(', ')}',
                                 style: theme.textTheme.titleMedium,
                               ),
                               const SizedBox(height: 8.0),
@@ -114,12 +108,12 @@ class ConfirmationScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 8.0),
                               Text(
-                                selectedTime,
+                                ticket.time,
                                 style: theme.textTheme.titleMedium,
                               ),
                               const SizedBox(height: 8.0),
                               Text(
-                                'Payment up front',
+                                ticket.isPaid ? 'Already Payed' : 'Payment up front',
                                 style: theme.textTheme.titleMedium,
                               ),
                             ],
@@ -135,11 +129,11 @@ class ConfirmationScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       await generateTicketPdf(
-                        title: play.title ?? '',
-                        imageUrl: play.imageUrl ?? 'assets/images/logo.png',
-                        selectedDate: selectedDate,
-                        selectedTime: selectedTime,
-                        selectedSeats: selectedSeats,
+                        title: ticket.play.title ?? '',
+                        imageUrl: ticket.play.imageUrl ?? 'assets/images/logo.png',
+                        selectedDate: ticket.date,
+                        selectedTime: ticket.time,
+                        selectedSeats: ticket.seats,
                       );
                     },
                     style: ElevatedButton.styleFrom(
