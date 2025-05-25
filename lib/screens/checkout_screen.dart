@@ -5,6 +5,7 @@ import 'package:thea/theme/app_theme.dart';
 
 import '../models/bought_ticket.dart';
 import '../util/shared_preferences.dart';
+import '../widgets/bottom_navigation_bar.dart';
 import 'confirmation_screen.dart';
 import 'my_tickets_screen.dart';
 
@@ -37,26 +38,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final totalPrice = widget.selectedSeats.length * (widget.play.regularTickets.price ?? 25); // Default price if not available
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        backgroundColor:theme.appBarTheme.backgroundColor,
+        backgroundColor:isDark ? Colors.blueGrey.shade800.withOpacity(0.9) : Colors.white.withOpacity(0.9),
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.darkText),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const Icon(Icons.crop_original, color: AppColors.green),
+            Icon(Icons.crop_original, color: isDark ? AppColorsDark.green : AppColors.green),
             const Text('-', style: TextStyle(color: AppColors.darkText, fontWeight: FontWeight.bold, fontSize: 20)),
-            const Icon(Icons.calendar_today, color: AppColors.green),
+            Icon(Icons.calendar_today, color: isDark ? AppColorsDark.green : AppColors.green),
             const Text('-', style: TextStyle(color: AppColors.darkText, fontWeight: FontWeight.bold, fontSize: 20)),
-            const Icon(Icons.chair, color: AppColors.green),
+            Icon(Icons.chair, color: isDark ? AppColorsDark.green : AppColors.green),
             const Text('-', style: TextStyle(color: AppColors.darkText, fontWeight: FontWeight.bold, fontSize: 20)),
             const Icon(Icons.credit_card, color: Colors.black87),
             const Text('-', style: TextStyle(color: AppColors.darkText, fontWeight: FontWeight.bold, fontSize: 20)),
-            const Icon(Icons.star_border, color: AppColors.grey),
+            Icon(Icons.star_border, color: isDark ? Colors.grey[600] : Colors.grey[400]),
           ],
         ),
         centerTitle: true,
@@ -84,7 +86,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: Colors.blue[700],
+                    color: isDark ? AppColorsDark.blue : Colors.blue[700],
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Column(
@@ -126,7 +128,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: AppColors.container,
+                    color: isDark ? AppColorsDark.container : AppColors.container,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Form(
@@ -234,7 +236,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: isDark ? AppColorsDark.blue : Colors.blue,
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       textStyle: const TextStyle(fontSize: 18.0),
                     ),
@@ -270,7 +272,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       handleCheckout(isPayingNow: false);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black12,
+                      backgroundColor: isDark? Colors.black : Colors.black12,
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       textStyle: const TextStyle(fontSize: 18.0),
                     ),
@@ -305,49 +307,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: AppColors.container,
-        unselectedItemColor: AppColors.darkText,
-        backgroundColor: AppColors.background,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/home_page');
-              break;
-            case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyTicketsScreen(),
-                ),
-              );
-              break;
-            case 2:
-            // Navigator.pushNamed(context, '/settings');
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number),
-            label: 'My tickets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_accessibility),
-            label: 'Settings',
-          ),
-        ],
-      ),
+        bottomNavigationBar: MyNavBar(currentIndex: 0)
     );
   }
 
   // Function to show an information dialog
   void _showInfoDialog(BuildContext context, String title, String content) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -360,7 +327,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 Navigator.of(context).pop();
               },
               style: TextButton.styleFrom(
-                foregroundColor: Colors.black, // Set the text color to black
+                foregroundColor: isDark ? Colors.grey[400] : Colors.black, // Set the text color to black
               ),
               child: const Text('OK'),
             ),
@@ -378,21 +345,28 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     String? Function(String?)? validator,
     VoidCallback? onHelpPressed,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      style: TextStyle(
+        color: isDark ? Colors.black : Colors.white,
+        fontSize: 16,
+      ),
       decoration: InputDecoration(
         labelText: labelText,
         border: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.grey)),
         enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.grey)),
         focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.grey)),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: isDark ? Colors.grey[200] : Colors.white,
         labelStyle: const TextStyle(color: AppColors.grey),
-        floatingLabelStyle: const TextStyle(color: Colors.black38),
+        floatingLabelStyle: TextStyle(color: isDark ? Colors.black : Colors.black38),
         suffixIcon: IconButton(
-          icon: const Icon(Icons.info_outline),
+          icon: Icon(Icons.info_outline, color: isDark ? Colors.grey[600] : Colors.white),
           onPressed: onHelpPressed,
+
         ),
       ),
       validator: validator,
@@ -433,6 +407,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     required String message,
     required VoidCallback onConfirmed,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -452,7 +428,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     },
                     child: const Text('Cancel'),
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.black, // Set the text color to black
+                      foregroundColor: isDark ? Colors.white : Colors.black, // Set the text color to black
                     ),
                   ),
                   ElevatedButton(

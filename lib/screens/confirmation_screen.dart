@@ -6,6 +6,7 @@ import 'package:thea/theme/app_theme.dart';
 
 import '../models/booking_stage.dart';
 import '../util/shared_preferences.dart';
+import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/pdf_file_generator.dart';
 import 'chat_screen.dart';
 import 'my_tickets_screen.dart';
@@ -47,13 +48,14 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     var ticket = widget.ticket;
     final formattedDate = "${ticket.date.day}/${ticket.date.month}/${ticket.date.year}";
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        backgroundColor: theme.appBarTheme.backgroundColor,
+        backgroundColor: isDark ? Colors.blueGrey.shade800.withOpacity(0.9) : Colors.white.withOpacity(0.9),
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.darkText),
         title: _buildAppBarProgress(),
@@ -81,7 +83,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: AppColors.container,
+                    color: isDark? AppColorsDark.container : AppColors.container,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Padding(
@@ -147,7 +149,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.green,
+                      backgroundColor: isDark? AppColorsDark.green : AppColors.green,
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       textStyle: const TextStyle(fontSize: 18.0),
                       shape: RoundedRectangleBorder(
@@ -164,7 +166,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                       showCancelDialog(ticket.id);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.red,
+                      backgroundColor: isDark ? AppColorsDark.red : AppColors.red,
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       textStyle: const TextStyle(fontSize: 18.0),
                       shape: RoundedRectangleBorder(
@@ -201,44 +203,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: AppColors.container,
-        unselectedItemColor: AppColors.darkText,
-        backgroundColor: AppColors.background,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/home_page');
-              break;
-            case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyTicketsScreen(),
-                ),
-              );
-              break;
-            case 2:
-            // Navigator.pushNamed(context, '/settings');
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number),
-            label: 'My tickets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_accessibility),
-            label: 'Settings',
-          ),
-        ],
-      ),
+        bottomNavigationBar: MyNavBar(currentIndex: 0)
     );
   }
 
@@ -252,7 +217,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("No"),
+            child: Text("No", style: Theme.of(context).textTheme.bodySmall),
           ),
           ElevatedButton(
             onPressed: () async {

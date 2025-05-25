@@ -18,6 +18,8 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -39,7 +41,7 @@ class ChatBubble extends StatelessWidget {
               ),
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: message.isUser ? Colors.lightGreen[300] : Colors.grey[200],
+                color: isDark? (message.isUser ? Colors.lightGreen[800] : Colors.grey[600]) : (message.isUser ? Colors.lightGreen[300] : Colors.grey[200]),
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: Text(message.text),

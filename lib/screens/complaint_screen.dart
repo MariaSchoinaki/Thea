@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:thea/theme/app_theme.dart';
 
+import '../widgets/bottom_navigation_bar.dart';
+
 class ComplaintScreen extends StatefulWidget {
   const ComplaintScreen({Key? key}) : super(key: key);
 
@@ -15,11 +17,13 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Make a Complaint', style: TextStyle(color: Colors.black87)),
-        backgroundColor: AppColors.background,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        title:  Text('Make a Complaint', style: TextStyle(color: isDark? Colors.grey[300] : Colors.black87)),
+        backgroundColor: isDark? AppColorsDark.background : AppColors.background,
+        iconTheme: IconThemeData(color: isDark? Colors.grey[300] : Colors.black87),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -80,7 +84,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.coral,
+                    backgroundColor: isDark? AppColorsDark.coral : AppColors.coral,
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     textStyle: const TextStyle(fontSize: 18.0),
                   ),
@@ -91,39 +95,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2, // Assuming this is under 'Settings' or a 'Help' section
-        selectedItemColor: AppColors.container,
-        unselectedItemColor: AppColors.darkText,
-        backgroundColor: AppColors.background,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/home_page');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/my_tickets');
-              break;
-            case 2:
-            // Current screen
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number),
-            label: 'My tickets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_accessibility),
-            label: 'Settings',
-          ),
-        ],
-      ),
+        bottomNavigationBar: MyNavBar(currentIndex: 0)
     );
   }
 }

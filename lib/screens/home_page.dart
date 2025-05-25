@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:thea/screens/complaint_screen.dart';
 import 'package:thea/screens/faq_screen.dart';
+import 'package:thea/screens/preferences_screen.dart';
 
 import '../models/booking_stage.dart';
 import '../theme/app_theme.dart';
+import '../widgets/bottom_navigation_bar.dart';
 import 'chat_screen.dart';
 import 'contact_screen.dart';
 import 'my_tickets_screen.dart';
@@ -16,9 +18,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -88,8 +91,6 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.brownLight,
-                  foregroundColor: AppColors.darkText,
                   minimumSize: const Size.fromHeight(60),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -119,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                           )
                         ],
                       ),
-                      child: const Text('Hi, how can I help you?'),
+                      child: Text('Hi, how can I help you?', style: TextStyle(color: Colors.black )),
                     ),
                     const SizedBox(width: 8),
                     GestureDetector(
@@ -139,54 +140,18 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: AppColors.container,
-        unselectedItemColor: AppColors.darkText,
-        backgroundColor: AppColors.background,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              //Navigator.pushNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyTicketsScreen(),
-                ),
-              );
-              break;
-            case 2:
-              //Navigator.pushNamed(context, '/settings');
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number),
-            label: 'My tickets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Preferences',
-          ),
-        ],
-      ),
+        bottomNavigationBar: MyNavBar(currentIndex: 0)
     );
   }
 
   Widget _buildMenuButton(Widget icon, String label, {VoidCallback? onTap}) {
+    final theme = Theme.of(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.container,
+          color: theme.primaryColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.brownDark),
         ),
@@ -198,10 +163,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 8),
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppColors.darkText,
-                ),
+                style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
             ],

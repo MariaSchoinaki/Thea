@@ -3,6 +3,7 @@ import 'package:thea/models/booking_stage.dart';
 import 'package:thea/models/play.dart';
 
 import '../theme/app_theme.dart';
+import '../widgets/bottom_navigation_bar.dart';
 import 'booking_screen.dart';
 import 'my_tickets_screen.dart';
 
@@ -14,7 +15,7 @@ class PlayDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: Text(playData.title ?? 'Play Details', style: theme.appBarTheme.titleTextStyle),
@@ -93,7 +94,7 @@ class PlayDetailsScreen extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.coral, // Match the button color
+                      backgroundColor: isDark ? AppColorsDark.coral : AppColors.coral,
                     ),
                     child: const Text(
                       'Book',
@@ -130,44 +131,7 @@ class PlayDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: AppColors.container,
-        unselectedItemColor: AppColors.darkText,
-        backgroundColor: AppColors.background,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/home_page');
-              break;
-            case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyTicketsScreen(),
-                ),
-              );
-              break;
-            case 2:
-            //Navigator.pushNamed(context, '/settings');
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number),
-            label: 'My tickets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_accessibility),
-            label: 'Settings',
-          ),
-        ],
-      ),
+        bottomNavigationBar: MyNavBar(currentIndex: 0),
     );
   }
 }

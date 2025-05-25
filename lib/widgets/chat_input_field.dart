@@ -55,10 +55,12 @@ class _ChatInputFieldState extends State<ChatInputField> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark? Colors.grey[700] : Colors.white,
         boxShadow: [
           BoxShadow(
             offset: const Offset(0, -1),

@@ -3,6 +3,7 @@ import 'package:thea/models/play.dart';
 import 'package:thea/theme/app_theme.dart';
 
 import '../models/booking_stage.dart';
+import '../widgets/bottom_navigation_bar.dart';
 import 'checkout_screen.dart';
 import 'my_tickets_screen.dart';
 
@@ -32,6 +33,8 @@ class _BookingScreenState extends State<BookingScreen> {
   Set<String> _bookedSeats = {'A2', 'B5', 'D3'}; // Example of booked seats
 
   Widget _buildSeat(String? seatNumber) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     if (seatNumber == null) {
       return const SizedBox(width: 30); // For spacing
     }
@@ -59,7 +62,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ? Colors.grey[400]
               : isSelected
               ? Colors.orange[400]
-              : Colors.green[400],
+              : (isDark ? AppColorsDark.green : Colors.green[400]),
           borderRadius: BorderRadius.circular(5),
         ),
         child: Center(
@@ -86,10 +89,11 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        backgroundColor: Colors.white.withOpacity(0.9),
+        backgroundColor: isDark ? Colors.blueGrey.shade800.withOpacity(0.9) : Colors.white.withOpacity(0.9),
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.darkText),
         title: _buildStepIcons(),
@@ -183,7 +187,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                 stage = BookingStage.seatSelection;
                               });
                             },
-                            selectedColor: AppColors.green,
+                            selectedColor: isDark ? AppColorsDark.green : AppColors.green,
                           ),
                         ),
                       if (widget.play.night != null && widget.play.night!.isNotEmpty)
@@ -197,7 +201,7 @@ class _BookingScreenState extends State<BookingScreen> {
                               stage = BookingStage.seatSelection;
                             });
                           },
-                          selectedColor: AppColors.green,
+                          selectedColor: isDark ? AppColorsDark.green : AppColors.green,
                         ),
                     ],
                   ),
@@ -224,7 +228,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         }
                             : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.coral,
+                          backgroundColor: isDark ? AppColorsDark.coral : AppColors.coral,
                         ),
                         child: const Text(
                           'Book',
@@ -262,64 +266,32 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: AppColors.container,
-        unselectedItemColor: AppColors.darkText,
-        backgroundColor: AppColors.background,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/home_page');
-              break;
-            case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyTicketsScreen(),
-                ),
-              );
-              break;
-            case 2:
-            //Navigator.pushNamed(context, '/settings');
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number),
-            label: 'My tickets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_accessibility),
-            label: 'Settings',
-          ),
-        ],
-      ),
+        bottomNavigationBar: MyNavBar(currentIndex: 0)
     );
   }
 
   Widget _buildStepIcons() {
-    final calendarColor = (_selectedDate != null) ? AppColors.green : Colors.black87;
-    final couchColor = (_selectedDate != null && _selectedTime != null) ? Colors.black87 : AppColors.grey;
-    final creditCardColor = (_selectedSeats.isNotEmpty) ? Colors.black87 : AppColors.grey;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final Color calendarColor = _selectedDate != null
+        ? (isDark ? AppColorsDark.green : AppColors.green)
+        : Colors.black87;
+    final couchColor = (_selectedDate != null && _selectedTime != null) ? Colors.black87 : isDark ? Colors.grey[600] : AppColors.grey;
+    final creditCardColor = (_selectedSeats.isNotEmpty) ? Colors.black87 : isDark ? Colors.grey[600] : AppColors.grey;
+
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        const Icon(Icons.crop_original, color: AppColors.green),
-        const Text('-', style: TextStyle(color: AppColors.darkText, fontWeight: FontWeight.bold, fontSize: 20)),
+        Icon(Icons.crop_original, color: isDark ? AppColorsDark.green : AppColors.green),
+        const Text('-', style: TextStyle(color: AppColors.darkText , fontWeight: FontWeight.bold, fontSize: 20)),
         Icon(Icons.calendar_today, color: calendarColor),
         const Text('-', style: TextStyle(color: AppColors.darkText, fontWeight: FontWeight.bold, fontSize: 20)),
         Icon(Icons.chair, color: couchColor),
         const Text('-', style: TextStyle(color: AppColors.darkText, fontWeight: FontWeight.bold, fontSize: 20)),
         Icon(Icons.credit_card, color: creditCardColor),
         const Text('-', style: TextStyle(color: AppColors.darkText, fontWeight: FontWeight.bold, fontSize: 20)),
-        const Icon(Icons.star_border, color: AppColors.grey),
+         Icon(Icons.star_border, color: isDark ? Colors.grey[600] : AppColors.grey),
       ],
     );
   }

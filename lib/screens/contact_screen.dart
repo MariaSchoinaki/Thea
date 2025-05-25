@@ -4,6 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:thea/theme/app_theme.dart';
 
+import '../widgets/bottom_navigation_bar.dart';
+
 class ContactUsScreen extends StatelessWidget {
   final String websiteUrl = 'https://www.thea.com';
   final String phoneNumber = '2101234567';
@@ -30,11 +32,13 @@ class ContactUsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contact Us', style: TextStyle(color: Colors.black87)),
-        backgroundColor: AppColors.background,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        title:  Text('Contact Us', style: TextStyle(color: isDark? Colors.grey[300] : Colors.black87)),
+        backgroundColor: isDark? AppColorsDark.background : AppColors.background,
+        iconTheme:  IconThemeData(color: isDark? Colors.grey[300] : Colors.black87),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -47,7 +51,7 @@ class ContactUsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24.0),
             ListTile(
-              leading: const Icon(Icons.web),
+              leading:  Icon(Icons.web),
               title: const Text('Website'),
               subtitle: Text(websiteUrl),
               onTap: () => _launchURL(websiteUrl),
@@ -102,39 +106,7 @@ class ContactUsScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: AppColors.container,
-        unselectedItemColor: AppColors.darkText,
-        backgroundColor: AppColors.background,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/home_page');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/my_tickets');
-              break;
-            case 2:
-            // Current screen
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number),
-            label: 'My tickets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_accessibility),
-            label: 'Preferences',
-          ),
-        ],
-      ),
+        bottomNavigationBar: MyNavBar(currentIndex: 0)
     );
   }
 }

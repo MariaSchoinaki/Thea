@@ -4,6 +4,7 @@ import '../models/play.dart';
 import '../data/plays.dart' as plays_db;
 import '../util/parser.dart';
 import '../theme/app_theme.dart';
+import '../widgets/bottom_navigation_bar.dart';
 import 'booking_screen.dart';
 import 'my_tickets_screen.dart';
 
@@ -32,6 +33,7 @@ class _InfoPlayPageState extends State<InfoPlayPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -50,7 +52,7 @@ class _InfoPlayPageState extends State<InfoPlayPage> {
             margin: EdgeInsets.only(bottom: 20),
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.container,
+              color: theme.primaryColor,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -71,7 +73,7 @@ class _InfoPlayPageState extends State<InfoPlayPage> {
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.grey,
+                        backgroundColor: isDark? AppColorsDark.surface : AppColors.grey,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -85,11 +87,11 @@ class _InfoPlayPageState extends State<InfoPlayPage> {
                         );
                       },
                       child: Text("More Info",
-                          style: TextStyle(color: AppColors.lightText)),
+                          style: TextStyle(color: isDark? AppColorsDark.primaryText : AppColors.lightText)),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.coral,
+                        backgroundColor: isDark? AppColorsDark.coral : AppColors.coral,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -103,7 +105,7 @@ class _InfoPlayPageState extends State<InfoPlayPage> {
                         );
                       },
                       child: Text("Book",
-                          style: TextStyle(color: AppColors.lightText)),
+                          style: TextStyle(color: isDark? AppColorsDark.primaryText : AppColors.lightText)),
                     ),
                   ],
                 ),
@@ -112,44 +114,7 @@ class _InfoPlayPageState extends State<InfoPlayPage> {
           );
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: AppColors.container,
-        unselectedItemColor: AppColors.darkText,
-        backgroundColor: AppColors.background,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/home_page');
-              break;
-            case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyTicketsScreen(),
-                ),
-              );
-              break;
-            case 2:
-              //Navigator.pushNamed(context, '/settings');
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number),
-            label: 'My tickets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_accessibility),
-            label: 'Settings',
-          ),
-        ],
-      ),
+        bottomNavigationBar: MyNavBar(currentIndex: 0)
     );
   }
 }

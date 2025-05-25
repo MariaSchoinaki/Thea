@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:thea/theme/app_theme.dart';
 
 import '../data/faq.dart' as faq;
+import '../widgets/bottom_navigation_bar.dart';
 
 class FAQScreen extends StatefulWidget {
   final List<faq.FAQItem> faqItems = faq.faqItems;
@@ -23,11 +24,13 @@ class _FAQScreenState extends State<FAQScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Frequently Asked Questions', style: TextStyle(color: Colors.black87)),
-        backgroundColor: AppColors.background,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        title: Text('Frequently Asked Questions', style: TextStyle(color: isDark? Colors.grey[300] : Colors.black87)),
+        backgroundColor: isDark? AppColorsDark.background : AppColors.background,
+        iconTheme: IconThemeData(color: isDark? Colors.grey[300] : Colors.black87),
       ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16.0),
@@ -43,7 +46,7 @@ class _FAQScreenState extends State<FAQScreen> {
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                 decoration: BoxDecoration(
-                  color: _isExpanded[index] ? AppColors.container.withOpacity(0.3) : AppColors.coral.withOpacity(0.1),
+                  color: _isExpanded[index] ? (isDark ? AppColorsDark.container.withOpacity(0.5) :  AppColors.container.withOpacity(0.3) ) : (isDark ?AppColorsDark.coral.withOpacity(0.3) : AppColors.coral.withOpacity(0.1)),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Text(
@@ -52,8 +55,8 @@ class _FAQScreenState extends State<FAQScreen> {
                 ),
               ),
               trailing: Icon(
-                Icons.keyboard_arrow_down, // Using a question mark icon
-                color: AppColors.blue,
+                Icons.keyboard_arrow_down,
+                color: isDark ? AppColorsDark.blue : AppColors.blue,
               ),
               initiallyExpanded: _isExpanded[index],
               onExpansionChanged: (bool expanded) {
@@ -64,46 +67,14 @@ class _FAQScreenState extends State<FAQScreen> {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(faqItem.answer, style: const TextStyle(fontSize: 14, color: AppColors.darkText)),
+                  child: Text(faqItem.answer, style: TextStyle(fontSize: 14, color: isDark ? AppColorsDark.primaryText : AppColors.darkText)),
                 ),
               ],
             ),
           );
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2,
-        selectedItemColor: AppColors.container,
-        unselectedItemColor: AppColors.darkText,
-        backgroundColor: AppColors.background,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/home_page');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/my_tickets');
-              break;
-            case 2:
-            // Current screen
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number),
-            label: 'My tickets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_accessibility),
-            label: 'Settings',
-          ),
-        ],
-      ),
+        bottomNavigationBar: MyNavBar(currentIndex: 0)
     );
   }
 }

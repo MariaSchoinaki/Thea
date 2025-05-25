@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:thea/models/booking_stage.dart';
 import 'package:thea/models/play.dart';
 import 'package:thea/models/ticket.dart';
+import 'package:thea/screens/preferences_screen.dart';
 import 'package:thea/theme/app_theme.dart';
 
 import '../models/bought_ticket.dart';
 import '../util/shared_preferences.dart';
+import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/pdf_file_generator.dart';
 
 class MyTicketsScreen extends StatefulWidget {
@@ -44,7 +46,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
-      color: AppColors.container,
+      color: theme.primaryColor,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -95,7 +97,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.green,
+                    backgroundColor: theme.colorScheme.tertiary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                   ),
@@ -117,7 +119,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.red,
+                    backgroundColor: theme.colorScheme.tertiaryContainer,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
                   ),
@@ -135,12 +137,13 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My tickets', style: TextStyle(color: Colors.black87)),
-        backgroundColor: AppColors.background,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        title: Text('My tickets'),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        iconTheme: IconThemeData(color: isDark? Colors.grey[300] : Colors.black87),
       ),
       body: Stack(
         children: [
@@ -186,44 +189,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1,
-        selectedItemColor: AppColors.container,
-        unselectedItemColor: AppColors.darkText,
-        backgroundColor: AppColors.background,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/home_page');
-              break;
-            case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyTicketsScreen(),
-                ),
-              );
-              break;
-            case 2:
-            // Navigator.pushNamed(context, '/settings');
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.confirmation_number),
-            label: 'My tickets',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_accessibility),
-            label: 'Settings',
-          ),
-        ],
-      ),
+        bottomNavigationBar: MyNavBar(currentIndex: 1)
     );
   }
 
