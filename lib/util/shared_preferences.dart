@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import '../models/bought_ticket.dart';
+import '../models/complaint.dart';
 
 Future<void> saveBoughtTickets(List<BoughtTicket> tickets) async {
   final prefs = await SharedPreferences.getInstance();
@@ -34,4 +35,26 @@ Future<void> cancelTicket(String ticketId) async {
 
   // Save the updated list back to SharedPreferences
   await saveBoughtTickets(currentTickets);
+}
+
+const _key = 'complaints';
+
+Future<void> saveComplaint(Complaint complaint) async {
+  final prefs = await SharedPreferences.getInstance();
+  final existing = prefs.getStringList(_key) ?? [];
+
+  final newList = [...existing, jsonEncode(complaint.toJson())];
+  await prefs.setStringList(_key, newList);
+}
+
+Future<List<Complaint>> loadComplaints() async {
+  final prefs = await SharedPreferences.getInstance();
+  final list = prefs.getStringList(_key) ?? [];
+
+  return list.map((e) => Complaint.fromJson(jsonDecode(e))).toList();
+}
+
+Future<void> clearComplaints() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove(_key);
 }
