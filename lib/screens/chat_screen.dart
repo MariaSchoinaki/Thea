@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:thea/theme/app_theme.dart';
 
 import '../models/booking_stage.dart';
@@ -25,33 +28,48 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
 
   Future<void> _handleSubmitted(String text) async {
     _textController.clear();
-    setState(() async {
+
+    setState(() {
       _messages.insert(0, ChatMessage(text: text, isUser: true));
+    });
 
+    String? botResponse = await _getLLMResponse(text);
 
-      // Call your LLM integration function
-      String? botResponse = await _getLLMResponse(text);
+    await Future.delayed(const Duration(milliseconds: 500));
 
-
-      // Simulate bot response after a short delay
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (botResponse != null && botResponse.isNotEmpty) {
-          setState(() {
-            _messages.insert(0, ChatMessage(text: botResponse, isUser: false));
-          });
-        } else {
-          // Handle the case where the LLM doesn't provide a response or an error occurs
-          setState(() {
-            _messages.insert(0, ChatMessage(text: 'Sorry, I couldn\'t generate a response.', isUser: false));
-          });
-        }
-      });
+    setState(() {
+      if (botResponse != null && botResponse.isNotEmpty) {
+        _messages.insert(0, ChatMessage(text: botResponse, isUser: false));
+      } else {
+        _messages.insert(0, ChatMessage(
+          text: 'Sorry, I couldn\'t generate a response.',
+          isUser: false,
+        ));
+      }
     });
   }
 
   // Placeholder for the LLM integration logic
   Future<String?> _getLLMResponse(String prompt) async {
-    return _generateBotResponse(prompt);
+    try {
+      final response = await http.post(
+        Uri.parse('https://ip/send_message'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'message': prompt}),
+      );
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        final data = jsonDecode(response.body);
+        return data['response'];
+      } else {
+        print('Server error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching LLM response: $e');
+      return null;
+    }
   }
 
   String _generateBotResponse(String userMessage) {
