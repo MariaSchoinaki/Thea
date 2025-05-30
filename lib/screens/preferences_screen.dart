@@ -212,15 +212,15 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 const Text('Text Size'),
                 Slider(
                   min: 1,
-                  max: 1.6,
+                  max: 1.4,
                   divisions: 2,
                   label:
                       preferences.textScale == 1
                           ? 'Normal'
-                          : preferences.textScale == 1.25
+                          : preferences.textScale == 1.2
                           ? 'Large'
                           : 'Extra Large',
-                  value: preferences.textScale,
+                  value: preferences.textScale.clamp(1.0, 1.4) as double,
                   onChanged: (val) => preferences.setTextScale(val),
                 ),
               ],

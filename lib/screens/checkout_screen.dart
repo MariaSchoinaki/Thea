@@ -351,7 +351,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       controller: controller,
       keyboardType: keyboardType,
       style: TextStyle(
-        color: isDark ? Colors.black : Colors.white,
+        color: isDark ? Colors.white : Colors.black,
         fontSize: 16,
       ),
       decoration: InputDecoration(
@@ -364,7 +364,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         labelStyle: const TextStyle(color: AppColors.grey),
         floatingLabelStyle: TextStyle(color: isDark ? Colors.black : Colors.black38),
         suffixIcon: IconButton(
-          icon: Icon(Icons.info_outline, color: isDark ? Colors.grey[600] : Colors.white),
+          icon: Icon(Icons.info_outline, color: isDark ? Colors.white : Colors.grey[600]),
           onPressed: onHelpPressed,
 
         ),

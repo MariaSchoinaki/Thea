@@ -64,7 +64,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
       label: RichText(
         text: TextSpan(
           text: '$label ',
-          style: TextStyle(color: isDark ? Colors.black87 : Colors.white70),
+          style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
           children: const [
             TextSpan(
               text: '*',
