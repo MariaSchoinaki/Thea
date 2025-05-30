@@ -202,5 +202,45 @@
     "ageLimit": "12+",
     "additionalInfo": "Lavish stage production; includes a famous chandelier sequence. Strobe lighting effects in select scenes.",
     "imageUrl": "assets/images/phantom_opera.jpg"
+  },
+  {
+    "title": "Oedipus Rex",
+    "headline": "Humanity's Mirror: A Ritual of Oedipus's Reckoning",
+    "description": "Never before have we in human history ever “looked” so far away inside the cosmos and so deeply inside humans. Very often, in the brink of destruction, we realize that the evil we are fighting against is, in fact, ourselves. Oedipus’ face is humanity itself in front of the mirror. Having found the culprit, he reaches the point where it is imperative that he make a choice, even at the eleventh hour, even after he has already committed the gravest error. In this performance, approached as a ritual of purification, a group of actors wearing masks of Elders comprises the writhing, mourning Chorus in agony. Through this Chorus, the tragic characters, namely Oedipus, Jocasta, Teiresias and Creon, are revealed.",
+    "playwriter": "Sophocles",
+    "cast": ["Yannis Stankoglou", "Marilita Lampropoulou", "Christos Malakis","Yannis Dalianis","Panagos Ioakeim","Giorgos Amoutzas","Konstantinos Moraitis"],
+    "genre": "Greek Tragedy",
+    "runtime": "2h 30min",
+    "availableDates": {
+      "2025-09-20T00:00:00": {"afternoon": [], "night": []},
+      "2025-09-21T00:00:00": {"afternoon": [], "night": []},
+      "2025-09-22T00:00:00": {"afternoon": [], "night": []},
+      "2025-09-23T00:00:00": {"afternoon": [], "night": []},
+      "2025-09-24T00:00:00": {"afternoon": [], "night": []},
+      "2025-09-25T00:00:00": {"afternoon": [], "night": []},
+      "2025-09-26T00:00:00": {"afternoon": [], "night": []},
+      "2025-09-27T00:00:00": {"afternoon": [], "night": []},
+      "2025-09-28T00:00:00": {"afternoon": [], "night": []},
+      "2025-09-29T00:00:00": {"afternoon": [], "night": []},
+      "2025-09-30T00:00:00": {"afternoon": [], "night": []}
+    },
+    "afternoon": "16:30",
+    "night": "21:30",
+    "regularTickets": {
+      "name": "regular",
+      "price": 27,
+      "availableTickets": 40,
+      "soldTickets": 0
+    },
+    "specialNeedsTickets": {
+      "name": "special needs",
+      "price": 20,
+      "availableTickets": 6,
+      "soldTickets": 0
+    },
+    "stage": "Stage B",
+    "ageLimit": "12+",
+    "additionalInfo": "",
+    "imageUrl": "assets/images/oidiopodus_rex.jpg"
   }
 ]
