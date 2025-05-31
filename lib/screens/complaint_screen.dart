@@ -149,6 +149,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
               const SizedBox(height: 24),
 
               DropdownButtonFormField<String>(
+                isExpanded: true,
                 value: _selectedSubject,
                 decoration: buildInputDecoration('Subject'),
                 items: _subjects.map( (subj) {
