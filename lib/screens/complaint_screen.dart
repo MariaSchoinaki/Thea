@@ -22,8 +22,22 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _subjectController = TextEditingController();
   final _descriptionController = TextEditingController();
+
+  final List<String> _subjects = [
+    'Ticket Delivery',
+    'Payment Issue',
+    'Seat Assignment Error',
+    'Show Delay or Cancellation',
+    'Refund Request',
+    'App Problem',
+    'Problem In Booking a Ticket',
+    'Accessibility or Special Assistance',
+    'Virtual Assistant',
+    'Other',
+  ];
+
+  String? _selectedSubject;
 
   Future<void> _saveComplaint(Complaint complaint) async {
     final prefs = await SharedPreferences.getInstance();
@@ -83,7 +97,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
         firstName: _firstNameController.text.trim(),
         lastName: _lastNameController.text.trim(),
         phone: _phoneController.text.trim(),
-        subject: _subjectController.text.trim(),
+        subject: _selectedSubject!.trim(),
         description: _descriptionController.text.trim(), timestamp: DateTime.now(),
       );
 
@@ -97,7 +111,9 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
       _firstNameController.clear();
       _lastNameController.clear();
       _phoneController.clear();
-      _subjectController.clear();
+      setState(() {
+        _selectedSubject = null;
+      });
       _descriptionController.clear();
     }
   }
@@ -146,10 +162,25 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
               ),
               const SizedBox(height: 16),
 
-              TextFormField(
-                controller: _subjectController,
+              DropdownButtonFormField<String>(
+                value: _selectedSubject,
                 decoration: buildInputDecoration('Subject'),
-                validator: (value) => _validateNotEmpty(value, 'subject'),
+                items: _subjects.map( (subj) {
+                  return DropdownMenuItem(
+                      value:subj,
+                      child: Text(subj));
+                }).toList(),
+                onChanged: (value){
+                  setState(() {
+                    _selectedSubject = value;
+                  });
+                },
+                validator: (value){
+                  if (value == null || value.isEmpty){
+                    return 'Please select a subject';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
 
