@@ -17,10 +17,9 @@ class Play implements BaseModel {
   final String night;
   final Ticket regularTickets;
   final Ticket specialNeedsTickets;
-  final String hall;
+  final String stage;
   final String ageLimit;
   final String additionalInfo;
-  final bool hearingImpaired;
   final String imageUrl;
 
   Play({
@@ -36,10 +35,9 @@ class Play implements BaseModel {
     required this.night,
     required this.regularTickets,
     required this.specialNeedsTickets,
-    required this.hall,
+    required this.stage,
     required this.ageLimit,
     required this.additionalInfo,
-    required this.hearingImpaired,
     required this.imageUrl,
   });
 
@@ -58,23 +56,18 @@ class Play implements BaseModel {
           (dateValue as Map<String, dynamic>).map(
                 (timeKey, timeValue) => MapEntry(
               timeKey,
-              (timeValue as List<dynamic>)
-                  .map((item) => item as String)
-                  .toList(),
+              (timeValue as List<dynamic>).map((e) => e as String).toList(),
             ),
           ),
         ),
       ),
       afternoon: json['afternoon'] as String,
       night: json['night'] as String,
-      regularTickets:
-      Ticket.fromJson(json['regularTickets'] as Map<String, dynamic>),
-      specialNeedsTickets:
-      Ticket.fromJson(json['specialNeedsTickets'] as Map<String, dynamic>),
-      hall: json['hall'] as String,
+      regularTickets: Ticket.fromJson(json['regularTickets']),
+      specialNeedsTickets: Ticket.fromJson(json['specialNeedsTickets']),
+      stage: json['stage'] as String,
       ageLimit: json['ageLimit'] as String,
       additionalInfo: json['additionalInfo'] as String,
-      hearingImpaired: json['hearingImpaired'] as bool,
       imageUrl: json['imageUrl'] as String,
     );
   }
@@ -94,10 +87,9 @@ class Play implements BaseModel {
       'night': night,
       'regularTickets': regularTickets.toJson(),
       'specialNeedsTickets': specialNeedsTickets.toJson(),
-      'hall': hall,
+      'stage': stage,
       'ageLimit': ageLimit,
       'additionalInfo': additionalInfo,
-      'hearingImpaired': hearingImpaired,
       'imageUrl': imageUrl,
     };
   }

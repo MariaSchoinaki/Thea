@@ -75,7 +75,7 @@ class PlayDetailsScreen extends StatelessWidget {
 
                 // Hall
                 Text(
-                  'Hall: ${playData.hall ?? ''}',
+                  'Hall: ${playData.stage ?? ''}',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
 

@@ -72,7 +72,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
                         style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8.0),
-                      Text('Location: ${ticket.play.hall}', style: theme.textTheme.titleMedium),
+                      Text('Location: ${ticket.play.stage}', style: theme.textTheme.titleMedium),
                       Text('Seats: ${seats.join(', ')}', style: theme.textTheme.titleMedium),
                       Text('Date: $formattedDate', style: theme.textTheme.titleMedium),
                       Text('Time: $showTime', style: theme.textTheme.titleMedium),

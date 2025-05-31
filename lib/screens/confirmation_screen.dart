@@ -110,7 +110,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                               ),
                               const SizedBox(height: 8.0),
                               Text(
-                                '${ticket.play.hall} - ${ticket.seats.join(', ')}',
+                                '${ticket.play.stage} - ${ticket.seats.join(', ')}',
                                 style: theme.textTheme.titleMedium,
                               ),
                               const SizedBox(height: 8.0),

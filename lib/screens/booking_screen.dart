@@ -129,7 +129,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   ],
                 ),
                 const SizedBox(height: 8.0),
-                Text('Hall: ${widget.play.hall ?? ''}', style: theme.textTheme.titleMedium),
+                Text('Hall: ${widget.play.stage ?? ''}', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 24.0),
                 const Text(
                   'Choose Day',
