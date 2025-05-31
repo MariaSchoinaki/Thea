@@ -14,6 +14,7 @@ class CheckoutScreen extends StatefulWidget {
   final DateTime selectedDate;
   final String selectedTime;
   final List<String> selectedSeats;
+  final String? slot;
 
   const CheckoutScreen({
     Key? key,
@@ -21,6 +22,7 @@ class CheckoutScreen extends StatefulWidget {
     required this.selectedDate,
     required this.selectedTime,
     required this.selectedSeats,
+    required this.slot,
   }) : super(key: key);
 
   @override
@@ -388,13 +390,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           seats: widget.selectedSeats,
           totalPrice: widget.selectedSeats.length * (widget.play.regularTickets.price).toDouble(),
           isPaid: isPayingNow,
+          slot: widget.slot,
         );
         addBoughtTicket(ticket);
 
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ConfirmationScreen(ticket: ticket,),
+            builder: (context) => ConfirmationScreen(ticket: ticket, slot: widget.slot),
           ),
         );
       },

@@ -9,6 +9,7 @@ class BoughtTicket {
   final Play play;
   final DateTime date;
   final String time;
+  final String? slot;
   final List<String> seats;
   final double totalPrice;
   final bool isPaid;
@@ -22,6 +23,7 @@ class BoughtTicket {
     required this.seats,
     required this.totalPrice,
     this.isPaid = false,
+    required this.slot,
   }) : id = id ?? generateTicketId(date, seats);
 
   Map<String, dynamic> toJson() => {
@@ -32,6 +34,7 @@ class BoughtTicket {
     'seats': seats,
     'totalPrice': totalPrice,
     'isPaid': isPaid,
+    'slot': slot,
   };
 
   factory BoughtTicket.fromJson(Map<String, dynamic> json) => BoughtTicket(
@@ -43,6 +46,7 @@ class BoughtTicket {
     seats: List<String>.from(json['seats']),
     totalPrice: (json['totalPrice'] as num).toDouble(),
     isPaid: json['isPaid'] ?? false,
+    slot: json['slot'] ?? 'afternoon',
   );
 }
 

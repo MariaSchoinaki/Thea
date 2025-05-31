@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:thea/screens/complaint_screen.dart';
 import 'package:thea/screens/faq_screen.dart';
-import 'package:thea/screens/preferences_screen.dart';
 
 import '../models/booking_stage.dart';
+import '../models/globals.dart' as globals;
+import '../models/play.dart';
 import '../theme/app_theme.dart';
 import '../widgets/bottom_navigation_bar.dart';
-import 'chat_screen.dart';
 import 'contact_screen.dart';
 import 'my_tickets_screen.dart';
 
@@ -18,6 +18,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var plays = globals.plays;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

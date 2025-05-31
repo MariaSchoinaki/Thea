@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/globals.dart';
 import 'home_page.dart';
 
 class StartScreen extends StatefulWidget {
@@ -11,6 +12,7 @@ class StartScreen extends StatefulWidget {
 class _StartScreenState extends State<StartScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+
 
   @override
   void initState() {
@@ -31,6 +33,7 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.of(context).pushReplacement(_createFadeRoute());
     });
+    loadPlays();
   }
 
   Route _createFadeRoute() {

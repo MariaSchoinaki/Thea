@@ -254,7 +254,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => CheckoutScreen(play: widget.play, selectedDate: _selectedDate!, selectedTime: _selectedTime!, selectedSeats: _selectedSeats),
+                              builder: (context) => CheckoutScreen(play: widget.play, selectedDate: _selectedDate!, selectedTime: _selectedTime!, selectedSeats: _selectedSeats, slot: _selectedKey),
                             ),
                           );
                         }

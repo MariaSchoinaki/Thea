@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:thea/screens/play_details_screen.dart';
 import '../models/play.dart';
-import '../data/plays.dart' as plays_db;
-import '../util/parser.dart';
 import '../theme/app_theme.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import 'booking_screen.dart';
-import 'my_tickets_screen.dart';
+import '../models/globals.dart' as globals;
 
 class InfoPlayPage extends StatefulWidget {
   @override
@@ -19,15 +17,7 @@ class _InfoPlayPageState extends State<InfoPlayPage> {
   @override
   void initState() {
     super.initState();
-    loadPlays();
-  }
-
-  Future<void> loadPlays() async {
-    final String response = plays_db.rawPlayData;
-    final data = parseJsonList(response, (map) => Play.fromJson(map));
-    setState(() {
-      _plays = data;
-    });
+    _plays = globals.plays;
   }
 
   @override

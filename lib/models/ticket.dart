@@ -3,8 +3,8 @@ import 'base_model.dart';
 class Ticket implements BaseModel {
   final String name;
   final double price;
-  final int availableTickets;
-  final int soldTickets;
+  int availableTickets;
+  int soldTickets;
 
   Ticket({
     required this.name,
@@ -30,5 +30,13 @@ class Ticket implements BaseModel {
       'availableTickets': availableTickets,
       'soldTickets': soldTickets,
     };
+  }
+  void decrementAvailableTickets() {
+    availableTickets--;
+    soldTickets++;
+  }
+  void incrementAvailableTickets() {
+    availableTickets++;
+    soldTickets--;
   }
 }

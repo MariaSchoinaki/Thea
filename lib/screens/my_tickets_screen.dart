@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:thea/models/booking_stage.dart';
-import 'package:thea/models/play.dart';
-import 'package:thea/models/ticket.dart';
-import 'package:thea/screens/preferences_screen.dart';
-import 'package:thea/theme/app_theme.dart';
 
+import 'package:intl/intl.dart';
 import '../models/bought_ticket.dart';
 import '../util/shared_preferences.dart';
 import '../widgets/bottom_navigation_bar.dart';
@@ -12,7 +9,7 @@ import '../widgets/pdf_file_generator.dart';
 
 class MyTicketsScreen extends StatefulWidget {
 
-  const MyTicketsScreen({Key? key}) : super(key: key);
+  const MyTicketsScreen({super.key});
   @override
   State<MyTicketsScreen> createState() => _MyTicketsScreenState();
 
@@ -114,9 +111,11 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
                     Future.delayed(const Duration(milliseconds: 300), () {
                       setState(() {
                         purchasedTickets.removeAt(index);
-                        saveBoughtTickets(purchasedTickets); // αν το κάνεις
+                        saveBoughtTickets(purchasedTickets);
                       });
                     });
+                    _cancelTicket(ticket);
+                    increaseTicket(ticket);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.tertiaryContainer,
@@ -199,4 +198,31 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
       cancelTicket(ticket.id);
     });
   }
+
+  void _updateTickets({required bool increase, required BoughtTicket ticket}) {
+    final seats = ticket.seats;
+    final formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(ticket.date);
+
+    final aTickets = seats.where((seat) => seat.startsWith('A')).length;
+    final regularTickets = seats.length - aTickets;
+
+    final special = ticket.play.specialNeedsTickets;
+    final regular = ticket.play.regularTickets;
+
+    for (int i = 0; i < aTickets; i++) {
+      increase ? special.incrementAvailableTickets() : special.decrementAvailableTickets();
+    }
+
+    for (int i = 0; i < regularTickets; i++) {
+      increase ? regular.incrementAvailableTickets() : regular.decrementAvailableTickets();
+    }
+
+    final availableSeats = ticket.play.availableDates[formattedDate]?[ticket.slot];
+    if (availableSeats != null) {
+      availableSeats.removeWhere((seat) => seats.contains(seat));
+    }
+  }
+
+  void decreaseTicket(BoughtTicket ticket) => _updateTickets(increase: false, ticket: ticket);
+  void increaseTicket(BoughtTicket ticket) => _updateTickets(increase: true, ticket: ticket);
 }

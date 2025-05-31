@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:thea/models/bought_ticket.dart';
-import 'package:thea/models/play.dart';
 import 'package:thea/theme/app_theme.dart';
-
+import 'package:intl/intl.dart';
 import '../models/booking_stage.dart';
 import '../util/shared_preferences.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/pdf_file_generator.dart';
-import 'chat_screen.dart';
-import 'my_tickets_screen.dart';
 
 
 class ConfirmationScreen extends StatefulWidget {
   final BoughtTicket ticket;
+  final String? slot;
 
   const ConfirmationScreen({
-    Key? key,
+    super.key,
     required this.ticket,
-  }) : super(key: key);
+    required this.slot,
+  });
 
   @override
   State<ConfirmationScreen> createState() => _ConfirmationScreenState();
@@ -51,7 +50,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     final isDark = theme.brightness == Brightness.dark;
     var ticket = widget.ticket;
     final formattedDate = "${ticket.date.day}/${ticket.date.month}/${ticket.date.year}";
-
+    decreaseTicket();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -221,9 +220,10 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              await cancelTicket(ticketId);
-              Navigator.pop(context);
-              setState(() {}); // Refresh ticket list
+             increaseTicket();
+             await cancelTicket(ticketId);
+             Navigator.pop(context);
+             setState(() {}); // Refresh ticket list
             },
             child: Text("Yes, Cancel"),
           ),
@@ -231,4 +231,31 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
       ),
     );
   }
+
+  void _updateTickets({required bool increase}) {
+    final seats = widget.ticket.seats;
+    final formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(widget.ticket.date);
+
+    final aTickets = seats.where((seat) => seat.startsWith('A')).length;
+    final regularTickets = seats.length - aTickets;
+
+    final special = widget.ticket.play.specialNeedsTickets;
+    final regular = widget.ticket.play.regularTickets;
+
+    for (int i = 0; i < aTickets; i++) {
+      increase ? special.incrementAvailableTickets() : special.decrementAvailableTickets();
+    }
+
+    for (int i = 0; i < regularTickets; i++) {
+      increase ? regular.incrementAvailableTickets() : regular.decrementAvailableTickets();
+    }
+
+    final availableSeats = widget.ticket.play.availableDates[formattedDate]?[widget.slot];
+    if (availableSeats != null) {
+      availableSeats.removeWhere((seat) => seats.contains(seat));
+    }
+  }
+
+  void decreaseTicket() => _updateTickets(increase: false);
+  void increaseTicket() => _updateTickets(increase: true);
 }

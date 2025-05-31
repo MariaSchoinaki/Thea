@@ -12,7 +12,7 @@ class Play implements BaseModel {
   final List<String> cast;
   final String genre;
   final String runtime;
-  final Map<String, Map<String, List<String>>> availableDates;
+  Map<String, Map<String, List<String>>> availableDates;
   final String afternoon;
   final String night;
   final Ticket regularTickets;
