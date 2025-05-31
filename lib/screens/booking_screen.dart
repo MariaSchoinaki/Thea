@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:thea/models/play.dart';
 import 'package:thea/theme/app_theme.dart';
+import 'package:intl/intl.dart';
 
 import '../models/booking_stage.dart';
 import '../widgets/bottom_navigation_bar.dart';
@@ -19,6 +20,7 @@ class BookingScreen extends StatefulWidget {
 class _BookingScreenState extends State<BookingScreen> {
   DateTime? _selectedDate;
   String? _selectedTime;
+  String? _selectedKey;
   List<String> _selectedSeats = [];
   BookingStage stage = BookingStage.dateTimeSelection;
   // Example seat layout data (replace with your actual data)
@@ -30,16 +32,22 @@ class _BookingScreenState extends State<BookingScreen> {
     ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8'],
     ['F1', 'F2', 'F3', 'F4', null, 'F5', 'F6', 'F7'],
   ];
-  Set<String> _bookedSeats = {'A2', 'B5', 'D3'}; // Example of booked seats
 
   Widget _buildSeat(String? seatNumber) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     if (seatNumber == null) {
-      return const SizedBox(width: 30); // For spacing
+      return const SizedBox(width: 41);
     }
-    bool isBooked = _bookedSeats.contains(seatNumber);
+
+    String formattedDateKey = DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(_selectedDate!);
+    final availableSeatsForDate = widget.play.availableDates[formattedDateKey];
+    final _availableSeats = availableSeatsForDate != null ? availableSeatsForDate[_selectedKey] : null;
+
+    bool isBooked = _availableSeats == null || !_availableSeats.contains(seatNumber);
     bool isSelected = _selectedSeats.contains(seatNumber);
+
+    bool isDisabledSeat = seatNumber.startsWith('A');
 
     return GestureDetector(
       onTap: isBooked
@@ -54,7 +62,7 @@ class _BookingScreenState extends State<BookingScreen> {
         });
       },
       child: Container(
-        width: 28,
+        width: 35,
         height: 28,
         margin: const EdgeInsets.all(3),
         decoration: BoxDecoration(
@@ -62,13 +70,28 @@ class _BookingScreenState extends State<BookingScreen> {
               ? Colors.grey[400]
               : isSelected
               ? Colors.orange[400]
+              : isDisabledSeat
+              ? Colors.blueAccent
               : (isDark ? AppColorsDark.green : Colors.green[400]),
           borderRadius: BorderRadius.circular(5),
         ),
         child: Center(
-          child: Text(
-            seatNumber,
-            style: const TextStyle(color: Colors.white, fontSize: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                seatNumber,
+                style: const TextStyle(color: Colors.white, fontSize: 10),
+              ),
+              if (isDisabledSeat) ...[
+                const SizedBox(width: 2),
+                const Icon(
+                  Icons.accessible,
+                  color: Colors.white,
+                  size: 14,
+                ),
+              ],
+            ],
           ),
         ),
       ),
@@ -90,6 +113,10 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final Set<DateTime> availableDateSet = widget.play.availableDates.keys
+        .map((dateStr) => DateTime.parse(dateStr))
+        .toSet();
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -129,7 +156,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   ],
                 ),
                 const SizedBox(height: 8.0),
-                Text('Hall: ${widget.play.stage ?? ''}', style: theme.textTheme.titleMedium),
+                Text('Stage: ${widget.play.stage ?? ''}', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 24.0),
                 const Text(
                   'Choose Day',
@@ -139,14 +166,14 @@ class _BookingScreenState extends State<BookingScreen> {
                 Theme(
                   data: Theme.of(context).copyWith(
                     datePickerTheme: DatePickerThemeData(
-                      dayBackgroundColor: MaterialStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(MaterialState.selected)) {
+                      dayBackgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                        if (states.contains(WidgetState.selected)) {
                           return Colors.grey[300]; // Grey circular background
                         }
                         return null;
                       }),
-                      dayForegroundColor: MaterialStateProperty.resolveWith<Color?>((states) {
-                        if (states.contains(MaterialState.selected)) {
+                      dayForegroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                        if (states.contains(WidgetState.selected)) {
                           return Colors.green; // Green text
                         }
                         return null;
@@ -155,9 +182,9 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                   ),
                   child: CalendarDatePicker(
-                    initialDate: _selectedDate ?? DateTime.now(),
+                    initialDate: _selectedDate ?? (availableDateSet.isNotEmpty ? availableDateSet.first : DateTime.now()),
                     firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 30)),
+                    lastDate: DateTime.now().add(const Duration(days: 90)),
                     onDateChanged: (DateTime newDate) {
                       setState(() {
                         _selectedDate = newDate;
@@ -165,6 +192,9 @@ class _BookingScreenState extends State<BookingScreen> {
                         _selectedSeats.clear();
                         stage = BookingStage.dateTimeSelection;
                       });
+                    },
+                    selectableDayPredicate: (DateTime day) {
+                      return availableDateSet.contains(DateTime(day.year, day.month, day.day));
                     },
                   ),
                 ),
@@ -184,6 +214,7 @@ class _BookingScreenState extends State<BookingScreen> {
                               setState(() {
                                 _selectedTime = selected ? widget.play.afternoon : null;
                                 _selectedSeats.clear(); // Clear selected seats on time change
+                                _selectedKey  = selected ? 'afternoon' : null;
                                 stage = BookingStage.seatSelection;
                               });
                             },
@@ -198,6 +229,7 @@ class _BookingScreenState extends State<BookingScreen> {
                             setState(() {
                               _selectedTime = selected ? widget.play.night : null;
                               _selectedSeats.clear(); // Clear selected seats on time change
+                              _selectedKey  = selected ? 'night' : null;
                               stage = BookingStage.seatSelection;
                             });
                           },
