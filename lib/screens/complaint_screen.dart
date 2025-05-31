@@ -37,7 +37,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
     'Other',
   ];
 
-  String? _selectedSubject;
+  String? _selectedSubject = 'Other';
 
   Future<void> _saveComplaint(Complaint complaint) async {
     final prefs = await SharedPreferences.getInstance();
@@ -74,6 +74,8 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
   InputDecoration buildInputDecoration(String label) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final Color enabledColor = isDark ? Colors.white54 : Colors.black54;
+    final Color borderColor = isDark ? Colors.white70 : Colors.black87;;
     return InputDecoration(
       label: RichText(
         text: TextSpan(
@@ -86,6 +88,12 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
             ),
           ],
         ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: enabledColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: borderColor),
       ),
       border: const OutlineInputBorder(),
     );
@@ -112,7 +120,7 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
       _lastNameController.clear();
       _phoneController.clear();
       setState(() {
-        _selectedSubject = null;
+        _selectedSubject = 'Other';
       });
       _descriptionController.clear();
     }
@@ -140,6 +148,28 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
               ),
               const SizedBox(height: 24),
 
+              DropdownButtonFormField<String>(
+                value: _selectedSubject,
+                decoration: buildInputDecoration('Subject'),
+                items: _subjects.map( (subj) {
+                  return DropdownMenuItem(
+                      value:subj,
+                      child: Text(subj));
+                }).toList(),
+                onChanged: (value){
+                  setState(() {
+                    _selectedSubject = value;
+                  });
+                },
+                validator: (value){
+                  if (value == null || value.isEmpty){
+                    return 'Please select a subject';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
               TextFormField(
                 controller: _firstNameController,
                 decoration: buildInputDecoration('First Name'),
@@ -162,27 +192,6 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
               ),
               const SizedBox(height: 16),
 
-              DropdownButtonFormField<String>(
-                value: _selectedSubject,
-                decoration: buildInputDecoration('Subject'),
-                items: _subjects.map( (subj) {
-                  return DropdownMenuItem(
-                      value:subj,
-                      child: Text(subj));
-                }).toList(),
-                onChanged: (value){
-                  setState(() {
-                    _selectedSubject = value;
-                  });
-                },
-                validator: (value){
-                  if (value == null || value.isEmpty){
-                    return 'Please select a subject';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
 
               TextFormField(
                 controller: _descriptionController,
