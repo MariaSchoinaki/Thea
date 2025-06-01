@@ -61,7 +61,7 @@ class _TutorialScreenState extends State<TutorialScreen>{
     await prefs.setBool('tutorial_completed', true);
 
     if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/home_page');
+      Navigator.of(context).pushReplacementNamed('/start');
     }
   }
 
@@ -149,10 +149,10 @@ class _TutorialScreenState extends State<TutorialScreen>{
 
                         Text(
                           _pages[index].title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                           textAlign: TextAlign.center,
                         ),

@@ -79,28 +79,41 @@ class ContactUsScreen extends StatelessWidget {
             SizedBox(
               height: 200.0,
               width: double.infinity,
-              child: FlutterMap(
-                options: MapOptions(
-                  center: location,
-                  zoom: 15.0,
-                  interactiveFlags: InteractiveFlag.none, // Disable map interaction
+              child: GestureDetector(
+                onTap: () async {
+                  final lat = location.latitude;
+                  final lng = location.longitude;
+                  final Uri googleMapsUrl = Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng');
+
+                  if (await canLaunchUrl(googleMapsUrl)) {
+                    await launchUrl(googleMapsUrl, mode: LaunchMode.externalApplication);
+                  } else {
+                    print('Could not launch $googleMapsUrl');
+                  }
+                },
+                child: FlutterMap(
+                  options: MapOptions(
+                    center: location,
+                    zoom: 15.0,
+                    interactiveFlags: InteractiveFlag.none,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      subdomains: const ['a', 'b', 'c'],
+                    ),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          width: 40.0,
+                          height: 40.0,
+                          point: location,
+                          child: const Icon(Icons.location_pin, color: Colors.red, size: 40.0),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                children: [
-                  TileLayer(
-                    urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    subdomains: const ['a', 'b', 'c'],
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        width: 40.0,
-                        height: 40.0,
-                        point: location,
-                        child: const Icon(Icons.location_pin, color: Colors.red, size: 40.0),
-                      ),
-                    ],
-                  ),
-                ],
               ),
             ),
           ],
