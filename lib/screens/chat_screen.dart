@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:thea/theme/app_theme.dart';
-
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../models/booking_stage.dart';
+import '../models/globals.dart' as globals;
+import '../widgets/actions/actions.dart';
 import '../widgets/chat_bubble.dart';
 import '../widgets/chat_input_field.dart';
+import 'contact_screen.dart';
 
 class ChatbotScreen extends StatefulWidget {
   final BookingStage? currentStage;
@@ -17,31 +20,36 @@ class ChatbotScreen extends StatefulWidget {
 }
 
 class _ChatbotScreenState extends State<ChatbotScreen> {
-  final List<ChatMessage> _messages = [];
   final TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _messages.insert(0, ChatMessage(text: 'Hello, I am the assistant and I am here to help you.', isUser: false));
   }
 
   Future<void> _handleSubmitted(String text) async {
     _textController.clear();
 
     setState(() {
-      _messages.insert(0, ChatMessage(text: text, isUser: true));
+      globals.chatHistory.insert(0, ChatMessage(text: text, isUser: true));
     });
 
-    String? botResponse = await _getLLMResponse(text);
-
-    await Future.delayed(const Duration(milliseconds: 500));
-
+    final loadingMsg = ChatMessage(text: '', isUser: false, isLoading: true);
     setState(() {
+      globals.chatHistory.insert(0, loadingMsg);
+    });
+
+    Map<String, dynamic>? botResponse = await _getLLMResponse(text);
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() {
+      globals.chatHistory.remove(loadingMsg);
+
       if (botResponse != null && botResponse.isNotEmpty) {
-        _messages.insert(0, ChatMessage(text: botResponse, isUser: false));
+        globals.chatHistory.insert(0, ChatMessage(text: botResponse['message'], isUser: false,
+            action:  getAction(context, mapActionToScreen(botResponse['code']))
+        ));
       } else {
-        _messages.insert(0, ChatMessage(
+        globals.chatHistory.insert(0, ChatMessage(
           text: 'Sorry, I couldn\'t generate a response.',
           isUser: false,
         ));
@@ -49,8 +57,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     });
   }
 
-  // Placeholder for the LLM integration logic
-  Future<String?> _getLLMResponse(String prompt) async {
+  Future<Map<String,dynamic>?> _getLLMResponse(String prompt) async {
     try {
       final response = await http.post(
         Uri.parse('https://ip/send_message'),
@@ -61,7 +68,29 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       if (response.statusCode == 200) {
         print(response.body);
         final data = jsonDecode(response.body);
-        return data['response'];
+        final responseData = data['response'];
+        String responseText;
+
+        if (responseData is Map && responseData.containsKey('message')) {
+          responseText = responseData['message'] as String;
+        } else if (responseData is String) {
+          responseText = responseData;
+        } else {
+          throw Exception('Invalid response format');
+        }
+        String responseCode = data['code'];
+        print("RESPONS TEXT: $responseText");
+        print("RESPONSE CODE: $responseCode");
+        final responsePattern = RegExp(r'Human:\s*(.*?)(?:<\|eot_id\|>|$)', dotAll: true);
+        final match = responsePattern .firstMatch(responseText);
+        if (match != null) {
+          String message = match.group(1) ?? '';
+          message = message.trim();
+          return {
+            'message': message,
+            'code': responseCode
+          };
+        }
       } else {
         print('Server error: ${response.statusCode}');
         return null;
@@ -69,17 +98,6 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     } catch (e) {
       print('Error fetching LLM response: $e');
       return null;
-    }
-  }
-
-  String _generateBotResponse(String userMessage) {
-    // Simple logic for generating a bot response
-    if (userMessage.toLowerCase().contains('complaint')) {
-      return 'I understand you have a complaint. Could you please describe it?';
-    } else if (userMessage.toLowerCase().contains('ticket')) {
-      return 'Are you having trouble with your ticket?';
-    } else {
-      return 'Thank you for your message.';
     }
   }
 
@@ -99,10 +117,20 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             child: ListView.builder(
               reverse: true, // To show the latest messages at the bottom
               padding: const EdgeInsets.all(8.0),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) => ChatBubble(message: _messages[index]),
+              itemCount: globals.chatHistory.length,
+              itemBuilder: (context, index) => ChatBubble(message: globals.chatHistory[index]),
             ),
           ),
+          if (globals.errorCount >= 3) ...[
+            ElevatedButton(
+              onPressed: clearHistory,
+              child: Text('Clear History'),
+            ),
+            ElevatedButton(
+              onPressed: contactSupport,
+              child: Text('Contact Support'),
+            ),
+          ],
           const Divider(height: 1.0),
           ChatInputField(
             textController: _textController,
@@ -112,4 +140,16 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
       ),
     );
   }
+
+  void clearHistory() {
+    setState(() {
+      globals.errorCount = 0;
+      globals.clearChatHistoryExceptFirst();
+    });
+  }
+
+  void contactSupport() {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => ContactUsScreen()));
+  }
+
 }
