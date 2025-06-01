@@ -38,7 +38,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
     final showDate = ticket.date;
     final showTime = ticket.time;
     final seats = ticket.seats;
-    final formattedDate = showDate;
+    final formattedDate = DateFormat('yyyy-MM-dd').format(showDate!);
     final ticketId = ticket.id;
 
     return Card(
@@ -110,7 +110,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
 
                     Future.delayed(const Duration(milliseconds: 300), () {
                       setState(() {
-                        purchasedTickets.removeAt(index);
+                        purchasedTickets.removeWhere((t) => t.id == ticketId);
                         saveBoughtTickets(purchasedTickets);
                       });
                     });
@@ -152,10 +152,6 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
             itemBuilder: (context, index) {
               final ticket = purchasedTickets[index];
               final ticketId = ticket.id;
-              final showDate = ticket.date;
-              final showTime = ticket.time;
-              final seats = ticket.seats;
-              final formattedDate = '${showDate.day}/${showDate.month}/${showDate.year}';
 
               return AnimatedSize(
                 duration: const Duration(milliseconds: 300),
@@ -219,7 +215,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
 
     final availableSeats = ticket.play.availableDates[formattedDate]?[ticket.slot];
     if (availableSeats != null) {
-      availableSeats.removeWhere((seat) => seats.contains(seat));
+      increase ? availableSeats.addAll(seats) : availableSeats.removeWhere((seat) => seats.contains(seat));
     }
   }
 

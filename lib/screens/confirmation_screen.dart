@@ -252,7 +252,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
 
     final availableSeats = widget.ticket.play.availableDates[formattedDate]?[widget.slot];
     if (availableSeats != null) {
-      availableSeats.removeWhere((seat) => seats.contains(seat));
+      increase ? availableSeats.addAll(seats) :availableSeats.removeWhere((seat) => seats.contains(seat));
     }
   }
 
