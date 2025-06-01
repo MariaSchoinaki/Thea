@@ -155,7 +155,9 @@ class _ComplaintScreenState extends State<ComplaintScreen> {
                 items: _subjects.map( (subj) {
                   return DropdownMenuItem(
                       value:subj,
-                      child: Text(subj));
+                      child: Text(subj,
+                          overflow: TextOverflow.ellipsis,
+                        maxLines: 1));
                 }).toList(),
                 onChanged: (value){
                   setState(() {
