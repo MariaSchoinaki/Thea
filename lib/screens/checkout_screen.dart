@@ -46,7 +46,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        backgroundColor:isDark ? Colors.blueGrey.shade800.withOpacity(0.9) : Colors.white.withOpacity(0.9),
+        backgroundColor:theme.scaffoldBackgroundColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.darkText),
         title: Row(
