@@ -91,7 +91,7 @@ This tech stack enables **scalability**, **real-time performance**, and a **prem
 
 ## Prototypes
 
-See [Paper Prototypes](https://drive.google.com/drive/folders/1xF2_Uc2FPMEayIRCFTd0w7BhIxO7R4Cd?usp=sharing) and [Figma Prototypes](https://drive.google.com/drive/folders/1I4XQjdXnCj3sGRjnRG6HTxPwFPO5AsO7?usp=sharing).
+See [Paper Prototypes](https://drive.google.com/drive/folders/1xF2_Uc2FPMEayIRCFTd0w7BhIxO7R4Cd?usp=sharing) and [Figma Prototypes](https://www.figma.com/design/5JPYbFIvqSJHbrFsGquZQ4/thea?node-id=0-1&t=NsDG3Eau9mzXxxxm-1).
 
 ---
 
