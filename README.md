@@ -25,7 +25,10 @@ The app prioritizes accessibility for both tech-savvy and elderly users, integra
   Submit complaints or feedback directly through the chatbot. Issues can be escalated to a human agent for further assistance.
 
 - **Accessibility Support:**  
-  The app supports accessible seating (e.g., near interpreters for hearing-impaired users) and offers supertitles for certain shows to enhance the experience for everyone.
+  The app supports accessible seating (e.g., people with mobility disabilities) and offers supertitles for certain shows to enhance the experience for everyone.
+
+- **Accessibility Settings:**  
+  Personalize your experience with options for dark mode, adjustable font sizes, and larger buttons, ensuring comfortable use for all users, including those with visual impairments.
 
 - **Manual & Guided Actions:**  
   Traditional menu navigation is available alongside the NLP-powered chatbot, making the app friendly for both tech-savvy and less experienced users.
@@ -101,7 +104,7 @@ See [Paper Prototypes](https://drive.google.com/drive/folders/1xF2_Uc2FPMEayIRCF
 
 2. **Navigate to the AI script directory:**
    ```bash
-   cd theater-chatbot/lib/ai_script
+   cd lib\chatbot
    ```
 
 3. **Start the AI server:**
