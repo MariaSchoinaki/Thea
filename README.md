@@ -117,7 +117,16 @@ See [Paper Prototypes](https://drive.google.com/drive/folders/1xF2_Uc2FPMEayIRCF
      ```bash
      flutter run
      ```
-## Contributors
-- **Developer:** [Maria Schoinaki](https://github.com/MariaSchoinaki)
-- **Developer:** [Eleni Kechrioti](https://github.com/EleniKechrioti)
-- **Developer:** [Giorgos Isoufai](https://github.com/giwrgosisf)
+## Developers
+
+> [Maria Schoinaki](<https://github.com/MariaSchoinaki>), BSc Student <br />
+> Department of Informatics, Athens University of Economics and Business <br />
+> p3210191@aueb.gr <br/><br/>
+
+> [Eleni Kechrioti](https://github.com/EleniKechrioti), BSc Student <br />
+> Department of Informatics, Athens University of Economics and Business <br />
+> p3210078@aueb.gr <br/><br/>
+
+> [Giorgos Isoufai](https://github.com/giwrgosisf), BSc Student <br />
+> Department of Informatics, Athens University of Economics and Business <br />
+> p3210056@aueb.gr <br/><br/>
